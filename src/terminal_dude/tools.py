@@ -1,4 +1,15 @@
 import re
+import time
+
+
+def runtimes(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        func()
+        end_time = time.time()
+        return f"Runtime: {end_time - start_time:.6f} seconds"
+
+    return wrapper
 
 
 class Rules:

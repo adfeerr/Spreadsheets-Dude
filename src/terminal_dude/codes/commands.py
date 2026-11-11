@@ -68,8 +68,13 @@ def csv(stitle, wstitle, set_title):
 
 # ==================================================Show==============================================================
 @dude.command()
-def show():
-    pass
+@click.option("-s", "--stitle", type=click.STRING)
+@click.option("-w", "--wstitle", type=click.STRING)
+def show(stitle, wstitle):
+    editor = sheets.SheetsEditor()
+    editor.stitle = stitle
+    editor.wstitle = wstitle
+    click.echo(editor.graph)
 
 
 # =================================================Update=============================================================

@@ -76,6 +76,14 @@ class SheetsEditor:
     def find(self, value: str):
         self.worksheet().find(value)
 
+    def get(self, position: str):
+        rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
+        if rules.verify(strings=position) is True:
+            self.worksheet().get(position)
+            return True
+        else:
+            return False
+
     @property
     def get_list(self):
         return self.worksheet().get_all_values()
@@ -88,14 +96,6 @@ class SheetsEditor:
         rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
         if rules.verify(strings=position) is True:
             self.worksheet().append_row(values=list_of_value, table_range=position)
-        else:
-            return False
-
-    def get(self, position: str):
-        rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
-        if rules.verify(strings=position) is True:
-            self.worksheet().get(position)
-            return True
         else:
             return False
 
@@ -112,16 +112,44 @@ class SheetsEditor:
         else:
             raise TypeError("Please write '.csv' files")
 
+    @property
     def graph(self):
         result = ""
-        count = 0
+        lists = self.get_list
+        line = f"{'_' * (16 * (len(lists[0])) + (3 * len(lists[0]) - 1))}"
+        seperator = " | "
+        indent_2 = "  "
 
-        while count < self.get_list[0][0]:
-            pass
+        result += indent_2 + line + "\n"
+
+        for item in lists:
+            count = 0
+
+            while count != len(lists[0]):
+                if item[count] == "":
+                    result += seperator + f"{'-':<16.16}"
+                    count += 1
+
+                result += seperator + f"{item[count]:<16.16}"
+                count += 1
+
+            result += seperator + "\n"
+            if item[0] == lists[0][0]:
+                # while count != len(lists[0]):
+                result += " "
+                result += f"|{'_' * 18}" * len(lists[0])
+                result += "|\n"
+
+        result += " "
+        result += f"|{'_' * 18}" * len(lists[0])
+        result += "|\n"
+
+        return result
 
 
 if __name__ == "__main__":
     editor = SheetsEditor()
     editor.stitle = "LearnCLI"
-    editor.wstitle = "From Class"
-    editor.graph()
+    editor.wstitle = "Directory_1"
+
+    print(editor.graph)
