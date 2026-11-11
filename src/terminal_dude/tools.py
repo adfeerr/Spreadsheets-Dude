@@ -16,6 +16,15 @@ class Rules:
         return verified
 
 
+class PathFinder:
+    def __init__(self):
+        pass
+
+
+class EnvVar:
+    pass
+
+
 if __name__ == "__main__":
     text = "A1:B2"
     rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")

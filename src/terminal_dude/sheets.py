@@ -1,12 +1,7 @@
-from pathlib import Path
-from sys import path
+import csv
 
-CWD = Path(__file__).resolve().parent.parent
-path.insert(0, str(CWD))
-
-from tools import Rules
-
-from auth import client
+from terminal_dude.auth import client
+from terminal_dude.tools import Rules
 
 
 class SheetsEditor:
@@ -81,8 +76,13 @@ class SheetsEditor:
     def find(self, value: str):
         self.worksheet().find(value)
 
+    @property
     def get_list(self):
         return self.worksheet().get_all_values()
+
+    @property
+    def get_dict(self):
+        return self.worksheet().get_all_records()
 
     def insert(self, list_of_value: list, position: str):
         rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
@@ -95,11 +95,33 @@ class SheetsEditor:
         rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
         if rules.verify(strings=position) is True:
             self.worksheet().get(position)
+            return True
         else:
             return False
+
+    def csv_list(self, set_title: str):
+        rules = Rules(r"[a-zA-Z0-9]+\.csv")
+        if rules.verify(strings=set_title) is True:
+            with open(set_title, "w", newline="") as csv_files:
+                csv_write = csv.writer(csv_files)
+
+                for row in self.get_list:
+                    csv_write.writerow(row)
+
+            return True
+        else:
+            raise TypeError("Please write '.csv' files")
+
+    def graph(self):
+        result = ""
+        count = 0
+
+        while count < self.get_list[0][0]:
+            pass
 
 
 if __name__ == "__main__":
     editor = SheetsEditor()
     editor.stitle = "LearnCLI"
     editor.wstitle = "From Class"
+    editor.graph()
