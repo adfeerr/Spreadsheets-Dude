@@ -29,6 +29,15 @@ class Rules:
 
 class PathFinder:
     def __init__(self):
+        self.cwd = None
+
+    def verify(self):
+        pass
+
+    def config_file(self):
+        pass
+
+    def find(self):
         pass
 
 

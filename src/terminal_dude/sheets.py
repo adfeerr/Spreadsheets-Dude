@@ -46,9 +46,13 @@ class SheetsEditor:
 
     def worksheet(self):
         if not isinstance(self.wstitle, str):
-            raise TypeError("You need to declare worksheets title")
+            return self.open().sheet1
 
         worksheets = self.open().worksheet(str(self.wstitle))
+        return worksheets
+
+    def worksheet_sheet1(self):
+        worksheets = self.open().sheet1
         return worksheets
 
     def creates(self, title: str):
@@ -86,6 +90,8 @@ class SheetsEditor:
 
     @property
     def get_list(self):
+        if self.wstitle or self.worksheet().get_all_values() is None:
+            return self.worksheet_sheet1
         return self.worksheet().get_all_values()
 
     @property
@@ -129,9 +135,9 @@ class SheetsEditor:
                 if item[count] == "":
                     result += seperator + f"{'-':<16.16}"
                     count += 1
-
-                result += seperator + f"{item[count]:<16.16}"
-                count += 1
+                else:
+                    result += seperator + f"{item[count]:<16.16}"
+                    count += 1
 
             result += seperator + "\n"
             if item[0] == lists[0][0]:
@@ -146,10 +152,18 @@ class SheetsEditor:
 
         return result
 
+    def share(self, account: str, permission: str, roles: str):
+        pass
+
+    @property
+    def all_worksheet(self) -> list:
+        worksheets = self.open().worksheets()
+        return worksheets
+
 
 if __name__ == "__main__":
     editor = SheetsEditor()
     editor.stitle = "LearnCLI"
-    editor.wstitle = "Directory_1"
+    editor.wstitle = "dream of wealth"
 
-    print(editor.graph)
+    print(editor.all_worksheet)
