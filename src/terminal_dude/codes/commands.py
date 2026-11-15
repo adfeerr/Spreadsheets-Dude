@@ -3,6 +3,9 @@ from gspread import SpreadsheetNotFound, WorksheetNotFound
 
 from terminal_dude import sheets, tools
 
+# Editor
+editor = sheets.SheetsEditor()
+
 
 @click.group()
 @click.pass_context
@@ -11,24 +14,23 @@ def dude(ctx):
 
 
 # ================================================Create============================================================
+
+
 @dude.group(
     invoke_without_command=True,
     help="Creating a brand new Spreadsheets file or Worksheets",
 )
 @click.pass_context
 def create(ctx):
-    if ctx.invoked_subcommand is None:
-        click.echo("...?")
-    else:
-        pass
+    click.echo(create.get_help(ctx))
 
 
 @create.command(help="Creating a new Spreadsheets site")
 @click.argument("title", type=click.STRING)
-def sheet(title):
+@click.pass_context
+def sheet(ctx, title):
     try:
         # basic spreadsheets creation
-        editor = sheets.SheetsEditor()
         editor.stitle = title
         editor.creates(title=title)
         click.echo(f"Sheet '{title}' is created!")
@@ -50,6 +52,8 @@ def worksheet(stitle, wstitle):
 
 
 # ================================================Convert============================================================
+
+
 @dude.group(
     invoke_without_command=True, help="Convert Spreadsheets file into CSV format"
 )
@@ -80,6 +84,8 @@ def csv(stitle, wstitle, set_title):
 
 
 # ==================================================Show==============================================================
+
+
 @dude.group(invoke_without_command=True, help="Showing visualization of Worksheets")
 @click.option("-s", "--stitle", type=click.STRING, required=True)
 @click.option("-w", "--wstitle", type=click.STRING, required=False)
@@ -205,6 +211,8 @@ def range(ctx, range):
 @show.command(help="Showing current head by meaning it's top of the rows")
 @click.pass_context
 def head(ctx):
+
+    # NOT FINISHED
     sheet = str(ctx.obj["sheets"])
     worksheet = str(ctx.obj["worksheets"])
 
@@ -224,38 +232,65 @@ def head(ctx):
 
 
 @show.command(help="Showing the last rows have been insert")
-def peek():
-    pass
+@click.pass_context
+def peek(ctx):
+
+    # NOT FINISHED
+    sheet = str(ctx.obj["sheets"])
+    worksheet = str(ctx.obj["worksheets"])
+
+    editor = ctx.obj["editor"]
+    editor.stitle = sheet
+    editor.wstitle = worksheet
+    length = len(editor.get_list)
+
+    click.echo(editor.get_list[length - 1])
 
 
 # =================================================Update=============================================================
-@dude.group(help="Updating Worksheets cells")
-def update():
-    pass
 
 
-@update.command(help="Updating Spreadsheets title")
-def spreadsheets():
-    pass
+@dude.group(invoke_without_command=True, help="Updating Worksheets cells")
+@click.argument("sheets", type=click.STRING, required=False)
+@click.argument("new_title", type=click.STRING, required=False)
+@click.option("-w", "--worksheets", type=click.STRING, default=False, required=False)
+@click.pass_context
+def update(ctx, sheets, new_title, worksheets):
+    if ctx.invoked_subcommand is None:
+        editor.stitle = sheets
+        editor.worksheet_sheet1()
+        editor.update_stitle(new_title=new_title)
+        click.echo(f"Spreadsheets name changed from: '{sheets}' --> '{new_title}'")
 
-
-@update.command(help="Updating Worksheets title")
-def worksheets():
-    pass
+    else:
+        ctx.obj["sheets"] = sheets
+        if worksheets:
+            ctx.obj["worksheets"] = worksheets
+        else:
+            ctx.obj["worksheets"] = False
 
 
 @update.command(help="Updating spesific style")
-def style():
+@click.pass_context
+def style(ctx):
     pass
 
 
-@update.command(help="Updating specific cells by input the coordinate")
-def cells():
+@update.command(help="Updating specific range of cells by coordinate range")
+@click.pass_context
+def cells(ctx):
+    pass
+
+
+@update.command(help="Updating spesific cells")
+@click.pass_context
+def cell(ctx):
     pass
 
 
 @update.command(help="Updating spesific ranges of rows by input the range")
-def ranges():
+@click.pass_context
+def ranges(ctx):
     pass
 
 

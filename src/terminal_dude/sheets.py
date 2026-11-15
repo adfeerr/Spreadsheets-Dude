@@ -90,7 +90,7 @@ class SheetsEditor:
     @property
     def get_list(self):
         if self.wstitle or self.worksheet().get_all_values() is None:
-            return self.worksheet_sheet1
+            return self.worksheet_sheet1().get_all_values()
         return self.worksheet().get_all_values()
 
     @property
