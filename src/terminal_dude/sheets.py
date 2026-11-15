@@ -83,8 +83,7 @@ class SheetsEditor:
     def get(self, position: str):
         rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
         if rules.verify(strings=position) is True:
-            self.worksheet().get(position)
-            return True
+            return self.worksheet().get(position)
         else:
             return False
 
@@ -164,6 +163,8 @@ class SheetsEditor:
 if __name__ == "__main__":
     editor = SheetsEditor()
     editor.stitle = "LearnCLI"
-    editor.wstitle = "dream of wealth"
+    editor.wstitle = "From Class"
 
-    print(editor.all_worksheet)
+    # print(editor.all_worksheet)
+
+    print(editor.get("A1:A1"))
