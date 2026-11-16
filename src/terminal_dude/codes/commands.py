@@ -270,10 +270,10 @@ def update(ctx, sheets, new_title, worksheets):
             ctx.obj["worksheets"] = False
 
 
-@update.command(help="Updating spesific style")
-@click.pass_context
-def style(ctx):
-    pass
+# @update.command(help="Updating spesific style")
+# @click.pass_context
+# def style(ctx):
+#     editor.stitle = ctx.obj["sheets"]
 
 
 @update.command(help="Updating specific range of cells by coordinate range")
@@ -283,9 +283,13 @@ def cells(ctx):
 
 
 @update.command(help="Updating spesific cells")
+@click.argument("row", type=click.INT)
+@click.argument("col", type=click.INT)
+@click.argument("value")
 @click.pass_context
-def cell(ctx):
-    pass
+def cell(ctx, row, col, value):
+    editor.stitle = ctx.obj["sheets"]
+    editor.worksheet_sheet1().update_cell(row=row, col=col, value=value)
 
 
 @update.command(help="Updating spesific ranges of rows by input the range")
