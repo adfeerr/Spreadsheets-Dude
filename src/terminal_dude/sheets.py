@@ -1,5 +1,7 @@
 import csv
 
+from gspread.exceptions import WorksheetNotFound
+
 from terminal_dude.auth import client
 from terminal_dude.tools import Rules
 
@@ -40,17 +42,24 @@ class SheetsEditor:
     @property
     def open_sheet(self):
         if not isinstance(self.stitle, str):
-            raise TypeError("Spreadsheets title its either None or not a String")
+            raise TypeError("Spreadsheets title it's either None or not a String")
         else:
             spreadsheets = self.sheets.open(str(self.stitle))
             return spreadsheets
 
     @property
     def open_worksheet(self):
-        return self.open_sheet.worksheet(str(self.wstitle))
+        try:
+            if isinstance(self.wstitle, str):
+                ws = self.open_sheet.worksheet(str(self.wstitle))
+                return ws
+            else:
+                return self.open_sheet.sheet1
+        except WorksheetNotFound:
+            return self.open_sheet.sheet1
 
-    def worksheet1(self):
-        return self.open_sheet.sheet1
+    # def worksheet1(self):
+    #     return self.open_sheet.sheet1
 
     def create_sheet(self, title: str):
         self.sheets.create(title=title)
@@ -66,62 +75,36 @@ class SheetsEditor:
         self.open_sheet.update_title(new_title)
 
     def update_worksheet_title(self, new_title: str):
-        if self.open_worksheet is None:
-            self.worksheet1().update_title(new_title)
-        else:
-            self.open_worksheet.update_title(new_title)
+        self.open_worksheet.update_title(new_title)
 
     def see_rows(self, index: int):
-        if self.open_worksheet is None:
-            return self.worksheet1().row_values(index)
-        else:
-            return self.open_worksheet.row_values(index)
+        return self.open_worksheet.row_values(index)
 
     def see_cols(self, index: int):
-        if self.open_worksheet is None:
-            return self.worksheet1().col_values(index)
-        else:
-            return self.open_worksheet.col_values(index)
+        return self.open_worksheet.col_values(index)
 
     def find(self, value: str):
-        if self.open_worksheet is None:
-            self.worksheet1().find(value)
-        else:
-            self.open_worksheet.find(value)
+        self.open_worksheet.find(value)
 
     def get(self, position: str):
         rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
         if rules.verify(strings=position) is True:
-            if self.open_worksheet is None:
-                return self.worksheet1().get(position)
-            else:
-                return self.open_worksheet.get(position)
+            return self.open_worksheet.get(position)
         else:
             return False
 
     @property
     def get_list(self):
-        if self.open_worksheet is None:
-            return self.worksheet1().get_all_values()
-        else:
-            return self.open_worksheet.get_all_values()
+        return self.open_worksheet.get_all_values()
 
     @property
     def get_dict(self):
-        if self.open_worksheet is None:
-            return self.worksheet1().get_all_records()
-        else:
-            return self.open_worksheet.get_all_records()
+        return self.open_worksheet.get_all_records()
 
     def insert(self, list_of_value: list, position: str):
         rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
         if rules.verify(strings=position) is True:
-            if self.open_worksheet is None:
-                self.worksheet1().append_row(values=list_of_value, table_range=position)
-            else:
-                self.open_worksheet.append_row(
-                    values=list_of_value, table_range=position
-                )
+            self.open_worksheet.append_row(values=list_of_value, table_range=position)
         else:
             return False
 
@@ -141,8 +124,8 @@ class SheetsEditor:
 
     @property
     def graph(self):
-        result = ""
         lists = self.get_list
+        result = ""
         line = f"{'_' * (16 * (len(lists[0])) + (3 * len(lists[0]) - 1))}"
         seperator = " | "
         indent_2 = "  "

@@ -13,6 +13,8 @@ def universe(ctx):
         click.echo(universe.get_help(ctx=ctx))
     else:
         ctx.ensure_object(dict)
+        ctx.obj["sheets"] = None
+        ctx.obj["worksheets"] = None
 
 
 universe.add_command(convert)

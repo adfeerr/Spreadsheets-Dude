@@ -1,5 +1,5 @@
 import click
-from gspread import SpreadsheetNotFound, WorksheetNotFound
+from gspread import SpreadsheetNotFound
 
 from terminal_dude import sheets
 
@@ -13,33 +13,31 @@ editor = sheets.SheetsEditor()
 )
 @click.pass_context
 def create(ctx):
-    click.echo(create.get_help(ctx))
+    if ctx.invoked_subcommand is None:
+        click.echo(create.get_help(ctx))
+    else:
+        pass
 
 
 @create.command(help="Creating a new Spreadsheets site")
 @click.argument("title", type=click.STRING)
-@click.pass_context
-def sheet(ctx, title):
-    try:
-        # basic spreadsheets creation
-        editor.stitle = title
-        editor.creates(title=title)
-        click.echo(f"Sheet '{title}' is created!")
-    except SpreadsheetNotFound as err:
-        click.echo(err)
+def sheet(title):
+    editor.stitle = title
+    editor.create_sheet(title=title)
+    click.echo(f"Sheet '{title}' is created!")
 
 
 @create.command(help="Creating a new Worksheets sheets")
-@click.option("-s", "--stitle", type=click.STRING)
-@click.option("-w", "--wstitle", type=click.STRING)
-def worksheet(stitle, wstitle):
+@click.argument("sheet", type=click.STRING)
+@click.argument("worksheet", type=click.STRING)
+def worksheet(sheet, worksheet):
     try:
         editor = sheets.SheetsEditor()
-        editor.stitle = stitle
-        editor.createws(wstitle)
-        click.echo(f"Worksheets '{wstitle}' is created!")
-    except (SpreadsheetNotFound, WorksheetNotFound) as err:
-        click.echo(err)
+        editor.stitle = sheet
+        editor.create_worksheet(worksheet)
+        click.echo(f"Worksheets '{worksheet}' is created!")
+    except SpreadsheetNotFound:
+        click.echo("Error: response is okay, but spreadsheet is not found")
 
 
 if __name__ == "__main__":

@@ -36,7 +36,7 @@ def update(ctx, sheets, worksheets, new_title):
 #     editor.stitle = ctx.obj["sheets"]
 
 
-@update.command(invoke_without_command=True, help="Updating Worksheets name")
+@update.command(help="Updating Worksheets name")
 @click.argument("current", type=click.STRING, required=True)
 @click.argument("new", type=click.STRING, default="Untitled - CLI", required=False)
 @click.pass_context
