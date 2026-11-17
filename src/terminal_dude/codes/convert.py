@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import click
 from gspread.exceptions import SpreadsheetNotFound, WorksheetNotFound
 
@@ -31,6 +33,8 @@ def csv(ctx):
     sheet = ctx.obj["sheets"]
     worksheet = ctx.obj["worksheets"]
     set_title = ctx.obj["set_title"]
+
+    file = Path.cwd() / str(set_title)
 
     try:
         rule = tools.Rules(r"[a-zA-Z0-9]+\.csv")

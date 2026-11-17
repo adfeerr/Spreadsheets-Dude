@@ -1,15 +1,5 @@
 import re
-import time
-
-
-def runtimes(func):
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        func()
-        end_time = time.time()
-        return f"Runtime: {end_time - start_time:.6f} seconds"
-
-    return wrapper
+from pathlib import Path
 
 
 class Rules:
@@ -29,22 +19,19 @@ class Rules:
 
 class PathFinder:
     def __init__(self):
-        self.cwd = None
+        self.current_dir = Path(__file__).resolve()
 
-    def verify(self):
-        pass
+    @property
+    def cwd(self):
+        return str(self.current_dir)
 
-    def config_file(self):
-        pass
-
-    def find(self):
-        pass
-
-
-class EnvVar:
-    pass
+    def stack(self, path: str):
+        absolute_path = self.current_dir / path
+        return absolute_path
 
 
 if __name__ == "__main__":
     text = "A1:B2"
     rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
+
+    path = PathFinder()
