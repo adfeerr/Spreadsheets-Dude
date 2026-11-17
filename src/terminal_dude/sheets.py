@@ -37,75 +37,97 @@ class SheetsEditor:
 
     # ===============================================Method=====================================================================
 
-    def open(self):
+    @property
+    def open_sheet(self):
         if not isinstance(self.stitle, str):
-            raise TypeError("You need to declare spreadsheets title")
+            raise TypeError("Spreadsheets title its either None or not a String")
+        else:
+            spreadsheets = self.sheets.open(str(self.stitle))
+            return spreadsheets
 
-        spreadsheets = self.sheets.open(str(self.stitle))
-        return spreadsheets
+    @property
+    def open_worksheet(self):
+        return self.open_sheet.worksheet(str(self.wstitle))
 
-    def worksheet(self):
-        if not isinstance(self.wstitle, str):
-            return self.open().sheet1
+    def worksheet1(self):
+        return self.open_sheet.sheet1
 
-        worksheets = self.open().worksheet(str(self.wstitle))
-        return worksheets
-
-    def worksheet_sheet1(self):
-        worksheets = self.open().sheet1
-        return worksheets
-
-    def creates(self, title: str):
+    def create_sheet(self, title: str):
         self.sheets.create(title=title)
 
-    def createws(self, title: str, rows: int = 100, cols: int = 26):
-        self.open().add_worksheet(title=title, rows=rows, cols=cols)
+    def create_worksheet(self, title: str, rows: int = 100, cols: int = 26):
+        self.open_sheet.add_worksheet(title=title, rows=rows, cols=cols)
 
     # This delete method is confusing in the original documentation
-    def deletews(self, title):
-        self.open().del_worksheet(title)
+    def del_worksheet(self, title):
+        self.open_sheet.del_worksheet(title)
 
-    def update_stitle(self, new_title: str):
-        self.open().update_title(new_title)
+    def update_sheet_title(self, new_title: str):
+        self.open_sheet.update_title(new_title)
 
-    def update_wstitle(self, new_title: str):
-        self.worksheet().update_title(new_title)
+    def update_worksheet_title(self, new_title: str):
+        if self.open_worksheet is None:
+            self.worksheet1().update_title(new_title)
+        else:
+            self.open_worksheet.update_title(new_title)
 
     def see_rows(self, index: int):
-        return self.worksheet().row_values(index)
+        if self.open_worksheet is None:
+            return self.worksheet1().row_values(index)
+        else:
+            return self.open_worksheet.row_values(index)
 
     def see_cols(self, index: int):
-        return self.worksheet().col_values(index)
+        if self.open_worksheet is None:
+            return self.worksheet1().col_values(index)
+        else:
+            return self.open_worksheet.col_values(index)
 
     def find(self, value: str):
-        self.worksheet().find(value)
+        if self.open_worksheet is None:
+            self.worksheet1().find(value)
+        else:
+            self.open_worksheet.find(value)
 
     def get(self, position: str):
         rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
         if rules.verify(strings=position) is True:
-            return self.worksheet().get(position)
+            if self.open_worksheet is None:
+                return self.worksheet1().get(position)
+            else:
+                return self.open_worksheet.get(position)
         else:
             return False
 
     @property
     def get_list(self):
-        if self.wstitle or self.worksheet().get_all_values() is None:
-            return self.worksheet_sheet1().get_all_values()
-        return self.worksheet().get_all_values()
+        if self.open_worksheet is None:
+            return self.worksheet1().get_all_values()
+        else:
+            return self.open_worksheet.get_all_values()
 
     @property
     def get_dict(self):
-        return self.worksheet().get_all_records()
+        if self.open_worksheet is None:
+            return self.worksheet1().get_all_records()
+        else:
+            return self.open_worksheet.get_all_records()
 
     def insert(self, list_of_value: list, position: str):
         rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
         if rules.verify(strings=position) is True:
-            self.worksheet().append_row(values=list_of_value, table_range=position)
+            if self.open_worksheet is None:
+                self.worksheet1().append_row(values=list_of_value, table_range=position)
+            else:
+                self.open_worksheet.append_row(
+                    values=list_of_value, table_range=position
+                )
         else:
             return False
 
     def csv_list(self, set_title: str):
         rules = Rules(r"[a-zA-Z0-9]+\.csv")
+
         if rules.verify(strings=set_title) is True:
             with open(set_title, "w", newline="") as csv_files:
                 csv_write = csv.writer(csv_files)
@@ -156,15 +178,15 @@ class SheetsEditor:
 
     @property
     def all_worksheet(self) -> list:
-        worksheets = self.open().worksheets()
+        worksheets = self.open_sheet.worksheets()
         return worksheets
 
 
 if __name__ == "__main__":
     editor = SheetsEditor()
     editor.stitle = "LearnCLI"
-    editor.wstitle = "From Class"
+    editor.wstitle = "test"
+    print(editor.wstitle)
+    print(editor.graph)
 
     # print(editor.all_worksheet)
-
-    print(editor.get("A1:A1"))

@@ -1,5 +1,4 @@
 import click
-from gspread import SpreadsheetNotFound, WorksheetNotFound
 
 from terminal_dude.codes.convert import convert
 from terminal_dude.codes.create import create
@@ -10,7 +9,10 @@ from terminal_dude.codes.update import update
 @click.group(invoke_without_command=True)
 @click.pass_context
 def universe(ctx):
-    ctx.ensure_object(dict)
+    if ctx.invoked_subcommand is None:
+        click.echo(universe.get_help(ctx=ctx))
+    else:
+        ctx.ensure_object(dict)
 
 
 universe.add_command(convert)
