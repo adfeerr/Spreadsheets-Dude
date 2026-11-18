@@ -1,9 +1,8 @@
-from pathlib import Path
-
 import click
 from gspread.exceptions import SpreadsheetNotFound, WorksheetNotFound
 
-from terminal_dude import sheets, tools
+from terminal_dude import sheets
+from terminal_dude.tools import Rules
 
 # Editor
 global_edit = sheets.SheetsEditor()
@@ -34,12 +33,10 @@ def csv(ctx):
     worksheet = ctx.obj["worksheets"]
     set_title = ctx.obj["set_title"]
 
-    file = Path.cwd() / str(set_title)
+    rules = Rules(r"[a-zA-Z0-9]+\.csv")
 
     try:
-        rule = tools.Rules(r"[a-zA-Z0-9]+\.csv")
-
-        if rule.verify(strings=set_title) is True:
+        if rules.verify(strings=set_title) is True:
             if worksheet is None:
                 editor.stitle = sheet
             else:

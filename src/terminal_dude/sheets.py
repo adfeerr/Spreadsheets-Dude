@@ -1,4 +1,5 @@
 import csv
+from pathlib import Path
 
 from gspread.exceptions import WorksheetNotFound
 
@@ -89,7 +90,7 @@ class SheetsEditor:
     def get(self, position: str):
         rules = Rules(r"[A-Z]\d{1,4}+:[A-Z]\d{1,3}")
         if rules.verify(strings=position) is True:
-            return self.open_worksheet.get(position)
+            return list(self.open_worksheet.get(position))
         else:
             return False
 
@@ -112,7 +113,9 @@ class SheetsEditor:
         rules = Rules(r"[a-zA-Z0-9]+\.csv")
 
         if rules.verify(strings=set_title) is True:
-            with open(set_title, "w", newline="") as csv_files:
+            DIR = Path.cwd()
+            DEST = DIR / set_title
+            with open(DEST, "w", newline="") as csv_files:
                 csv_write = csv.writer(csv_files)
 
                 for row in self.get_list:

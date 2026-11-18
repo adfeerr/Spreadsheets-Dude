@@ -120,7 +120,7 @@ def column(ctx, index):
 
 # I need regex for this kinda thing
 @show.command(help="Showing spesific cells by specified it's cells coordinate")
-@click.argument("range", type=click.STRING, default="A1:E3", required=False)
+@click.argument("range", type=click.STRING, default="A1:E6", required=False)
 @click.pass_context
 def range(ctx, range):
     editor = global_edit
@@ -138,37 +138,8 @@ def range(ctx, range):
             editor.wstitle = worksheet
 
         if editor.get(range):
-            lists = editor.get(range)
-            result = ""
-            line = f"{'_' * (16 * (len(lists[0])) + (3 * len(lists[0]) - 1))}"
-            seperator = " | "
-            indent_2 = "  "
-
-            result += indent_2 + line + "\n"
-
-            for item in lists:
-                count = 0
-
-                while count != len(lists[0]):
-                    if item[count] == "":
-                        result += seperator + f"{'-':<16.16}"
-                        count += 1
-                    else:
-                        result += seperator + f"{item[count]:<16.16}"
-                        count += 1
-
-                result += seperator + "\n"
-                if item[0] == lists[0][0]:
-                    # while count != len(lists[0]):
-                    result += " "
-                    result += f"|{'_' * 18}" * len(lists[0])
-                    result += "|\n"
-
-            result += " "
-            result += f"|{'_' * 18}" * len(lists[0])
-            result += "|\n"
-
-            click.echo(result)
+            for row in editor.get(range):
+                click.echo(row)
 
         elif editor.get(range) is False:
             click.echo(f"Range '{range}' is not a valid coordinate")
