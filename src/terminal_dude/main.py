@@ -9,6 +9,8 @@ from terminal_dude.codes.update import update
 @click.group(invoke_without_command=True)
 @click.pass_context
 def universe(ctx):
+    """This is my first ever Python project. I'm using UV as my package manager and still learning this basic.
+    It's alot of pain to make this CLI app really works :')"""
     if ctx.invoked_subcommand is None:
         click.echo(universe.get_help(ctx=ctx))
     else:
